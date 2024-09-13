@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Sticky Notes</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/konva@8.4.3/konva.min.js"></script>
+    <script>
+        let elementsData = null;
+        // This is where we add the event listener
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchElementsData();
+        });
+        // Function to fetch and cache the elements data
+        function fetchElementsData() {
+            // Check if data is in local storage
+            const storedData = localStorage.getItem('elementsData');
+            if (storedData) {
+                // If data is in local storage, parse and use it
+                elementsData = JSON.parse(storedData);
+                console.log('Elements data loaded from local storage');
+            } else {
+                // If not in local storage, fetch from file
+                fetch('elements.json')  // This line accesses the JSON file
+                    .then(response => response.json())
+                    .then(data => {
+                        elementsData = data;
+                        // Store the fetched data in local storage
+                        localStorage.setItem('elementsData', JSON.stringify(data));
+                        console.log('Elements data loaded from file and cached in local storage');
+                    })
+                    .catch(error => console.error('Error loading elements data:', error));
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="form-container">
+        <form id="sticky-form">
+            <label for="sticky-number">Enter a number: </label>
+            <input type="number" id="sticky-number" required>
+            <button type="submit">Create Chemical Element</button>
+        </form>
+        <button id="generate-table">Generate Periodic Table</button>
+    </div>
+    <div id="container" class="toggleable"></div>
+    <div id="periodic-table-container" class="periodic-table-grid toggleable"></div>
+    <script type="module" src="elementTable.js"></script>
+    <script type="module" src="sticky-note.js"></script>
+</body>
+
+</html>
